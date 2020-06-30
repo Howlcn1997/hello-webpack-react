@@ -8,7 +8,7 @@ function App() {
     <div>
       <h1>Hello React</h1>
       <div className={STYLES.wrap}>-</div>
-      <FunctionComponent></FunctionComponent>
+      <FunctionComponent name={"哈哈哈"}/>
     </div>
   );
 }
