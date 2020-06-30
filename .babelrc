@@ -4,7 +4,8 @@
     [
       "@babel/preset-env",
       {
-        "useBuiltIns": "usage" //按需注⼊polyfill
+        "useBuiltIns": "usage", //按需注⼊polyfill
+        "corejs": 3
       }
     ]
   ]
