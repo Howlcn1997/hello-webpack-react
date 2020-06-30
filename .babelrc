@@ -1,0 +1,11 @@
+{
+  "presets": [
+    "@babel/preset-react",
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage" //按需注⼊polyfill
+      }
+    ]
+  ]
+}
