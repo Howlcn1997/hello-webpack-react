@@ -1,7 +1,7 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin");
+// const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin");
 
 // css相关匹配规则
 const cssRegex = /\.css$/;
@@ -11,17 +11,7 @@ const lessModuleRegex = /\.module\.(less)$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
-const isEnvDevelopment = true;
-
-function recursiveIssuer(m) {
-  if (m.issuer) {
-    return recursiveIssuer(m.issuer);
-  } else if (m.name) {
-    return m.name;
-  } else {
-    return false;
-  }
-}
+const isEnvDevelopment = false;
 
 const getStyleLoader = (
   cssOption = {},
@@ -57,26 +47,14 @@ module.exports = {
     path: path.join(__dirname, "./build"),
     filename: "main.js",
   },
-  mode: "production",
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        fooStyles: {
-          name: "foo",
-          test: (m, c, entry = "foo") =>
-            m.constructor.name === "CssModule" && recursiveIssuer(m) === entry,
-          chunks: "all",
-          enforce: true,
-        },
-        barStyles: {
-          name: "bar",
-          test: (m, c, entry = "bar") =>
-            m.constructor.name === "CssModule" && recursiveIssuer(m) === entry,
-          chunks: "all",
-          enforce: true,
-        },
-      },
-    },
+  // mode: "production",
+  mode: "development",
+  devServer: {
+    contentBase: path.join(__dirname, "dist"),
+    port: 8080,
+    inline: true,
+    hot: true,
+    open: true,
   },
   module: {
     rules: [
@@ -84,6 +62,15 @@ module.exports = {
         test: /\.(js|jsx)$/,
         use: {
           loader: "babel-loader",
+        },
+      },
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: {
+          loader: "url-loader",
+          options: {
+            limit: 8192,
+          },
         },
       },
       {
