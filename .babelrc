@@ -5,8 +5,11 @@
       "@babel/preset-env",
       {
         "useBuiltIns": "usage", //按需注⼊polyfill
-        "corejs": 3  //启用es6语法
+        "corejs": 3 //启用es6语法
       }
     ]
+  ],
+  "plugins": [
+    "react-hot-loader/babel"
   ]
 }

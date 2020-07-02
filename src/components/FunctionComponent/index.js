@@ -7,7 +7,7 @@ export default (props) => {
   return (
     <div className={STYLES.wrap}>
       <div>This is a {name}</div>
-      <div>Count ==> {count}</div>
+      <div>Count == {count}</div>
       <button
         onClick={() => {
           setCount(count + 1);

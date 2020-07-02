@@ -49,7 +49,7 @@ const getStyleLoader = (
 };
 
 module.exports = {
-  entry: path.join(__dirname, "./src/index.js"),
+  entry: ["react-hot-loader/patch", path.join(__dirname, "./src/index.js")],
   output: {
     path: path.join(__dirname, "./build"),
     filename: "main.js",
@@ -70,9 +70,7 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        use: {
-          loader: "babel-loader",
-        },
+        loader: "babel-loader",
       },
       {
         test: /\.(png|jpg|gif)$/,

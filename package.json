@@ -1,5 +1,5 @@
 {
-  "name": "hello-world",
+  "name": "hello-webpack-react",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -35,6 +35,7 @@
     "babel-preset-react": "^6.24.1",
     "core-js": "3",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-hot-loader": "^4.12.21"
   }
 }
