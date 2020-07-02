@@ -11,7 +11,8 @@ const lessModuleRegex = /\.module\.(less)$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
-const isEnvDevelopment = false;
+const isEnvDevelopment = true;
+const isEnvProduction = !isEnvDevelopment;
 
 const getStyleLoader = (
   cssOption = {},
@@ -19,7 +20,7 @@ const getStyleLoader = (
   processorOptions = {}
 ) => {
   const loaders = [
-    !isEnvDevelopment && {
+    isEnvProduction && {
       loader: MiniCssExtractPlugin.loader,
       options: {
         publicPath: "./",
