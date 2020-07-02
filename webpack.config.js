@@ -1,6 +1,8 @@
 const path = require("path");
+const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 // const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin");
 
 // css相关匹配规则
@@ -11,7 +13,8 @@ const lessModuleRegex = /\.module\.(less)$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
-const isEnvDevelopment = false;
+const isEnvDevelopment = true;
+const isEnvProduction = !isEnvDevelopment;
 
 const getStyleLoader = (
   cssOption = {},
@@ -19,11 +22,15 @@ const getStyleLoader = (
   processorOptions = {}
 ) => {
   const loaders = [
-    !isEnvDevelopment && {
+    isEnvProduction && {
       loader: MiniCssExtractPlugin.loader,
       options: {
         publicPath: "./",
         filename: "[name].css",
+        // ## only enable hot in development
+        //  hmr: process.env.NODE_ENV === 'development',
+        // ## if hmr does not work, this is a forceful method.
+        //  reloadAll: true,
       },
     },
     isEnvDevelopment && "style-loader",
@@ -50,10 +57,13 @@ module.exports = {
   // mode: "production",
   mode: "development",
   devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    port: 8080,
+    contentBase: "./dist",
     inline: true,
+    // 热更新
     hot: true,
+    // 本地服务器端口号
+    port: 8080,
+    // 自动打开设备默认浏览器
     open: true,
   },
   module: {
@@ -69,7 +79,12 @@ module.exports = {
         use: {
           loader: "url-loader",
           options: {
+            // 文件小于8192kb时，直接转换成base64
             limit: 8192,
+            // 输出目标路径（相对于entry）
+            outputPath: "./assets",
+            // 为静态资源引用地址自动添加前置路径
+            publicPath: "./assets",
           },
         },
       },
@@ -114,8 +129,11 @@ module.exports = {
     ],
   },
   plugins: [
+    // cleanStaleWebpackAssets: Dont remove index.html file after incremental build triggered by watch
+    new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
+    new webpack.HotModuleReplacementPlugin(),
     new MiniCssExtractPlugin({
-      filename: "./css/[name].css",
+      filename: "./css/[name]-[hash:5].css",
     }),
     new HtmlWebpackPlugin({
       filename: "index.html", //生成的文件名
