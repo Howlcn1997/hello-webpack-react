@@ -162,8 +162,6 @@ module.exports = {
     // 设置别名
     alias: {
       "@components": path.join(__dirname, "./src/components"), // 这样配置后 @ 可以指向 src 目录
-    },
-    // 可由外部自定义alias
-    ...(modules.webpackAliases || {}),
+    }
   },
 };
