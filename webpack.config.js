@@ -13,14 +13,15 @@ const lessModuleRegex = /\.module\.(less)$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
-const isEnvDevelopment = true;
-const isEnvProduction = !isEnvDevelopment;
+const isEnvDevelopment = process.env.NODE_ENV === "development";
+const isEnvProduction = process.env.NODE_ENV === "production";
 
-const getStyleLoader = (
-  cssOption = {},
-  preProcessor,
-  processorOptions = {}
-) => {
+/**
+ *
+ * @param {Object} cssOption css-loader相关options
+ * @param {String|Object|Array(Object)} preProcessor 其他前置loader
+ */
+const getStyleLoader = (cssOption = {}, preProcessor) => {
   const loaders = [
     isEnvProduction && {
       loader: MiniCssExtractPlugin.loader,
@@ -39,23 +40,53 @@ const getStyleLoader = (
       options: cssOption,
     },
   ].filter(Boolean);
+
   if (preProcessor) {
-    loaders.push({
-      loader: preProcessor,
-      options: processorOptions,
-    });
+    // 可用数组的方式传入多个loader
+    if (Array.isArray(preProcessor)) {
+      Array.prototype.push.apply(loaders, preProcessor);
+    } else {
+      loaders.push(preProcessor);
+    }
   }
   return loaders;
 };
 
+/**
+ * 预配置plugins
+ */
+const getPlugins = () => {
+  return [
+    // cleanStaleWebpackAssets: Dont remove index.html file after incremental build triggered by watch
+    new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
+    isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
+    new MiniCssExtractPlugin({
+      filename: "./css/[name]-[hash:5].css",
+    }),
+    isEnvProduction &&
+      new HtmlWebpackPlugin({
+        filename: "index.html", //生成的文件名
+        template: path.join(__dirname, "./public/index.html"),
+        minify: {
+          removeComments: true, //清除注释
+          collapseWhitespace: true, //清理空格
+        },
+      }),
+    isEnvDevelopment &&
+      new HtmlWebpackPlugin({
+        filename: "index.html",
+        template: path.join(__dirname, "./public/index.html"),
+      }),
+  ].filter(Boolean);
+};
+
 module.exports = {
+  mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
   entry: ["react-hot-loader/patch", path.join(__dirname, "./src/index.js")],
   output: {
     path: path.join(__dirname, "./build"),
     filename: "main.js",
   },
-  // mode: "production",
-  mode: "development",
   devServer: {
     contentBase: "./dist",
     inline: true,
@@ -126,26 +157,13 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    // cleanStaleWebpackAssets: Dont remove index.html file after incremental build triggered by watch
-    new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
-    new webpack.HotModuleReplacementPlugin(),
-    new MiniCssExtractPlugin({
-      filename: "./css/[name]-[hash:5].css",
-    }),
-    new HtmlWebpackPlugin({
-      filename: "index.html", //生成的文件名
-      template: path.join(__dirname, "./public/index.html"),
-      minify: {
-        removeComments: true, //清除注释
-        collapseWhitespace: true, //清理空格
-      },
-    }),
-  ],
+  plugins: getPlugins(),
   resolve: {
     // 设置别名
     alias: {
       "@components": path.join(__dirname, "./src/components"), // 这样配置后 @ 可以指向 src 目录
     },
+    // 可由外部自定义alias
+    ...(modules.webpackAliases || {}),
   },
 };
