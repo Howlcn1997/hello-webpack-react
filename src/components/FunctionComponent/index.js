@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import STYLES from "./index.module.scss";
 
 export default (props) => {
@@ -7,7 +7,7 @@ export default (props) => {
   return (
     <div className={STYLES.wrap}>
       <div>This is a {name}</div>
-      <div>Count == {count}</div>
+      <div>Count ==> {count}</div>
       <button
         onClick={() => {
           setCount(count + 1);
