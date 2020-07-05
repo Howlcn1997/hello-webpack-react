@@ -20,6 +20,7 @@
     "less-loader": "6.1.2",
     "mini-css-extract-plugin": "0.9.0",
     "node-sass": "4.14.1",
+    "postcss-loader": "^3.0.0",
     "react-hot-loader": "^4.12.21",
     "sass-loader": "8.0.2",
     "style-loader": "1.2.1",
@@ -37,6 +38,9 @@
     "babel-preset-react": "^6.24.1",
     "core-js": "3",
     "cross-env": "^7.0.2",
+    "postcss-flexbugs-fixes": "^4.2.1",
+    "postcss-normalize": "^9.0.0",
+    "postcss-preset-env": "^6.7.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   }

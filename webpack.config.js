@@ -5,6 +5,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 // const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin");
 
+const postcssNormalize = require("postcss-normalize");
+
 // css相关匹配规则
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -38,6 +40,23 @@ const getStyleLoader = (cssOption = {}, preProcessor) => {
     {
       loader: "css-loader",
       options: cssOption,
+    },
+    {
+      loader: "postcss-loader",
+      options: {
+        ident: "postcss",
+        plugins: () => [
+          require("postcss-flexbugs-fixes"),
+          require("postcss-preset-env")({
+            autoprefixer: {
+              flexbox: "no-2009",
+            },
+            stage: 3,
+          }),
+          postcssNormalize(),
+        ],
+        sourceMap: isEnvProduction,
+      },
     },
   ].filter(Boolean);
 
@@ -87,6 +106,9 @@ module.exports = {
     path: path.join(__dirname, "./build"),
     filename: "main.js",
   },
+  devtool: isEnvProduction
+    ? "source-map"
+    : isEnvDevelopment && "cheap-module-source-map",
   devServer: {
     contentBase: "./dist",
     inline: true,
@@ -129,29 +151,36 @@ module.exports = {
             // 定义重新生成的类名
             localIdentName: "[name]_[local]-[hash:base64:5]",
           },
+          sourceMap: isEnvProduction,
         }),
       },
       {
         test: lessRegex,
         exclude: lessModuleRegex,
-        use: getStyleLoader({}, "less-loader"),
+        use: getStyleLoader({ sourceMap: isEnvProduction }, "less-loader"),
       },
       {
         test: lessModuleRegex,
         use: getStyleLoader(
-          { modules: { localIdentName: "[name]_[local]-[hash:base64:5]" } },
+          {
+            modules: { localIdentName: "[name]_[local]-[hash:base64:5]" },
+            sourceMap: isEnvProduction,
+          },
           "less-loader"
         ),
       },
       {
         test: sassRegex,
         exclude: sassModuleRegex,
-        use: getStyleLoader({}, "sass-loader"),
+        use: getStyleLoader({ sourceMap: isEnvProduction }, "sass-loader"),
       },
       {
         test: sassModuleRegex,
         use: getStyleLoader(
-          { modules: { localIdentName: "[name]_[local]-[hash:base64:5]" } },
+          {
+            modules: { localIdentName: "[name]_[local]-[hash:base64:5]" },
+            sourceMap: isEnvProduction,
+          },
           "sass-loader"
         ),
       },
@@ -162,6 +191,6 @@ module.exports = {
     // 设置别名
     alias: {
       "@components": path.join(__dirname, "./src/components"), // 这样配置后 @ 可以指向 src 目录
-    }
+    },
   },
 };
