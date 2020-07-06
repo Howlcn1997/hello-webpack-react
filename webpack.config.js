@@ -105,6 +105,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, "./build"),
     filename: "main.js",
+    chunkFilename: "[name].chunk.js",
   },
   devtool: isEnvProduction
     ? "source-map"
