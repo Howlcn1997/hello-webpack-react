@@ -12,16 +12,14 @@ const PAGES = [
   {
     path: "/",
     params: { exact: true },
-    component: withLazy(() => import("@components/A")),
+    component: withLazy(() => import(/* webpackChunkName: "pages" */"@components/A")),
   },
   {
     path: "/b",
     params: { exact: true },
-    component: withLazy(() => import("@components/B")),
+    component: withLazy(() => import(/* webpackChunkName: "pages" */"@components/B")),
   },
 ];
-
-console.log("import", import("@components/A"));
 
 function App() {
   return (
